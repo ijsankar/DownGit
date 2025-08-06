@@ -15,7 +15,7 @@ downGitModule.factory('downGitService', [
         var repoInfo = {};
 
         var parseInfo = function(parameters) {
-            var repoPath = new URL(parameters.url).pathname;
+            var repoPath = decodeURIComponent(new URL(parameters.url.replace(/#/g, "%23")).pathname);
             var splitPath = repoPath.split("/");
             var info = {};
 
@@ -65,7 +65,7 @@ downGitModule.factory('downGitService', [
         }
 
         var mapFileAndDirectory = function(dirPaths, files, requestedPromises, progress){
-            $http.get(repoInfo.urlPrefix+dirPaths.pop()+repoInfo.urlPostfix).then(function(response) {
+            $http.get(repoInfo.urlPrefix+encodeURIComponent(dirPaths.pop())+repoInfo.urlPostfix).then(function(response) {
                 for(var i=response.data.length-1; i>=0; i--){
                     if(response.data[i].type=="dir"){
                         dirPaths.push(response.data[i].path);
@@ -155,7 +155,7 @@ downGitModule.factory('downGitService', [
                     window.location = downloadUrl;
 
                 }else{
-                    $http.get(repoInfo.urlPrefix+repoInfo.resPath+repoInfo.urlPostfix).then(function(response) {
+                    $http.get(repoInfo.urlPrefix+encodeURIComponent(repoInfo.resPath)+repoInfo.urlPostfix).then(function(response) {
                         if(response.data instanceof Array){
                             downloadDir(progress);
                         }else{
